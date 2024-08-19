@@ -31,6 +31,7 @@ import ROUGHNESS from "../public/metalness/ChainmailCopperRoundedThin001_ROUGHNE
 import AO from "../public/metalness/ChainmailCopperRoundedThin001_AO_4K_METALNESS.jpg";
 import NRM from "../public/metalness/ChainmailCopperRoundedThin001_NRM_4K_METALNESS.jpg";
 import MASK from "../public/metalness/ChainmailCopperRoundedThin001_MASK_4K_METALNESS.png";
+import { SpecularMaterial } from "./SpecularMaterial";
 
 const imageLoader = new TextureLoader();
 export class ConverterViewer {
@@ -48,9 +49,9 @@ export class ConverterViewer {
   private materialPbr: MeshPhysicalMaterial = new MeshPhysicalMaterial({
     metalness: 1.0,
     roughness: 1.0,
-    aoMap: imageLoader.load(AO),
-    normalMap: imageLoader.load(NRM),
-    alphaMap: imageLoader.load(MASK),
+    // aoMap: imageLoader.load(AO),
+    // normalMap: imageLoader.load(NRM),
+    // alphaMap: imageLoader.load(MASK),
     transparent: true,
   });
   private referenceMaterial: MeshStandardMaterial = new MeshStandardMaterial({
@@ -71,7 +72,7 @@ export class ConverterViewer {
 
   private contentElement = document.getElementById("content") as HTMLElement;
 
-  constructor() {
+  constructor(materialSpecGloss: ShaderMaterial) {
     setTimeout(() => {
       console.log(this.referenceMaterial.defines);
       console.log(this.materialPbr.defines);
@@ -90,58 +91,7 @@ export class ConverterViewer {
 
     // init shader Specular/Glossines
 
-    var uniforms = UniformsUtils.merge([
-      UniformsLib.common,
-      UniformsLib.envmap,
-      UniformsLib.aomap,
-      UniformsLib.specularmap,
-      UniformsLib.lightmap,
-      UniformsLib.emissivemap,
-      UniformsLib.bumpmap,
-      UniformsLib.normalmap,
-      UniformsLib.displacementmap,
-      UniformsLib.roughnessmap,
-      UniformsLib.metalnessmap,
-      UniformsLib.fog,
-      UniformsLib.lights,
-      {
-        emissive: { value: /*@__PURE__*/ new Color(0x000000) },
-        roughness: { value: 1.0 },
-        specularValue: { value: 0.0 },
-        envMapIntensity: { value: 1 },
-        glossinessMap: { value: null },
-      },
-    ]);
-
-
-    this.materialSpecGloss = new ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      transparent: true,
-      lights: true,
-      defines: {
-        USE_MAP: "",
-        USE_UV: "",
-        MAP_UV: "vUv",
-        USE_NORMALMAP: "",
-        NORMALMAP_UV: "vUv",
-        USE_AOMAP: "",
-        AOMAP_UV: "vUv",
-        USE_SPECULAR: "",
-        USE_SPECULARMAP: "",
-        SPECULARMAP_UV: "vUv",
-        USE_ROUGHNESSMAP: "",
-        ROUGHNESSMAP_UV: "vUv",
-        USE_LIGHTMAP: "",
-        LIGHTMAP_UV: "vUv",
-        USE_FOG: "",
-        USE_SHADOWMAP: "",
-        USE_ALPHAMAP: "",
-        ALPHAMAP_UV: "vUv",
-        USE_NORMALMAP_TANGENTSPACE: "",
-      },
-    });
+    this.materialSpecGloss = materialSpecGloss;
 
     this.materialSpecGloss.uniforms.normalMap.value = imageLoader.load(NRM);
     this.materialSpecGloss.uniforms.aoMap.value = imageLoader.load(AO);
@@ -187,8 +137,8 @@ export class ConverterViewer {
     this.scene.add(mesh1, mesh2, mesh3);
 
     this.createScene("Specular/glossiness workflow", mesh1);
-    this.createScene("Converted", mesh2);
-    this.createScene("Metalic/Roughness workflow/reference", mesh3);
+    this.createScene("Converted to metallic/roughness", mesh2);
+    this.createScene("Reference metallic/roughness workflow", mesh3);
 
     this.camera.position.z = 100;
 
@@ -290,6 +240,14 @@ export class ConverterViewer {
   public setGlossinesinesTexture(texture: Texture) {
     this.materialSpecGloss.uniforms.glossinessMap.value = texture;
     this.materialSpecGloss.needsUpdate = true;
+  }
+
+  public setSameTexturesPBR() {
+    this.materialPbr.normalMap =
+      this.materialSpecGloss.uniforms.normalMap.value;
+    this.materialPbr.aoMap = this.materialSpecGloss.uniforms.aoMap.value;
+    this.materialPbr.alphaMap = this.materialSpecGloss.uniforms.alphaMap.value;
+    this.materialPbr.needsUpdate = true;
   }
 
   public setAlbdeoTexturePBR(texture: Texture) {
