@@ -3,6 +3,7 @@ import { Texture, TextureLoader } from "three";
 
 
 interface TextureSlotProps {
+    canEdit?: boolean;
     nameSlot: string;
     texture?: Texture;
     setTexture: (texture: Texture) => void;
@@ -10,7 +11,7 @@ interface TextureSlotProps {
 export function TextureSlot(props: TextureSlotProps) {
 
     const textureLoader = new TextureLoader();
-    const [texture, setTexture] = createSignal<Texture | null>(props.texture || null);
+    const [texture, setTexture] = createSignal<Texture | null>(props.texture || null, { equals: false });
 
     createEffect(() => {
         if (props.texture)
@@ -18,7 +19,6 @@ export function TextureSlot(props: TextureSlotProps) {
     })
 
     function loadTexture() {
-
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
@@ -40,11 +40,15 @@ export function TextureSlot(props: TextureSlotProps) {
         input.click();
     }
 
+    createEffect(() => {
+        console.log(texture());
+    });
+
     return (
         <div>
             <div class="pl-4 border-l-4 border-indigo-500">{props.nameSlot} texture
-                <div class="w-12 h-12 bg-black overflow-hidden" onclick={loadTexture}>
-                    {texture() && <img class="w-full h-full" src={texture()!.image.src} alt="" />}
+                <div class="w-12 h-12 bg-black overflow-hidden" onclick={() => props.canEdit && loadTexture()}>
+                    {texture()?.image?.src && <img class="w-full h-full" src={texture()?.image.src} alt="" />}
                 </div>
             </div>
         </div>

@@ -54,29 +54,51 @@ export class ConverterViewer {
     // alphaMap: imageLoader.load(MASK),
     transparent: true,
   });
-  private referenceMaterial: MeshStandardMaterial = new MeshStandardMaterial({
-    metalness: 1.0,
-    roughness: 1.0,
-    map: imageLoader.load(COL, (texture) => {
-      texture.colorSpace = SRGBColorSpace;
-      this.referenceMaterial.needsUpdate = true;
-    }),
-    // map: imageLoader.load(COLSpec),
-    metalnessMap: imageLoader.load(METALNESS),
-    roughnessMap: imageLoader.load(ROUGHNESS),
-    aoMap: imageLoader.load(AO),
-    normalMap: imageLoader.load(NRM),
-    alphaMap: imageLoader.load(MASK),
-    transparent: true,
-  });
+  // private referenceMaterial: MeshStandardMaterial = new MeshStandardMaterial({
+  //   metalness: 1.0,
+  //   roughness: 1.0,
+  //   map: imageLoader.load(COL, (texture) => {
+  //     texture.colorSpace = SRGBColorSpace;
+  //     this.referenceMaterial.needsUpdate = true;
+  //   }),
+  //   // map: imageLoader.load(COLSpec),
+  //   metalnessMap: imageLoader.load(METALNESS),
+  //   roughnessMap: imageLoader.load(ROUGHNESS),
+  //   aoMap: imageLoader.load(AO),
+  //   normalMap: imageLoader.load(NRM),
+  //   alphaMap: imageLoader.load(MASK),
+  //   transparent: true,
+  // });
+
+  private referenceMaterial: MeshStandardMaterial;
 
   private contentElement = document.getElementById("content") as HTMLElement;
 
-  constructor(materialSpecGloss: ShaderMaterial) {
+  constructor(
+    materialSpecGloss: ShaderMaterial,
+    materialMetalRough: MeshStandardMaterial
+  ) {
     setTimeout(() => {
       console.log(this.referenceMaterial.defines);
       console.log(this.materialPbr.defines);
     }, 10000);
+
+    this.referenceMaterial = materialMetalRough;
+    this.referenceMaterial.setValues({
+      metalness: 1.0,
+      roughness: 1.0,
+      map: imageLoader.load(COL, (texture) => {
+        texture.colorSpace = SRGBColorSpace;
+        this.referenceMaterial.needsUpdate = true;
+      }),
+      // map: imageLoader.load(COLSpec),
+      metalnessMap: imageLoader.load(METALNESS),
+      roughnessMap: imageLoader.load(ROUGHNESS),
+      aoMap: imageLoader.load(AO),
+      normalMap: imageLoader.load(NRM),
+      alphaMap: imageLoader.load(MASK),
+      transparent: true,
+    });
 
     const canvas = document.getElementById("c") as HTMLCanvasElement;
     this.renderer = new WebGLRenderer({

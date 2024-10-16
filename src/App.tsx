@@ -1,22 +1,25 @@
 import { createSignal, onMount } from 'solid-js';
 import { ConverterViewer } from './ConverterViewer';
-import { ShaderMaterial, SRGBColorSpace, Texture, TextureLoader } from 'three';
+import { MeshStandardMaterial, SRGBColorSpace, Texture, TextureLoader } from 'three';
 
 import COL from '../public/specular/ChainmailCopperRoundedThin001_COL_4K_SPECULAR.jpg';
 import REFLECTION from '../public/specular/ChainmailCopperRoundedThin001_REFL_4K_SPECULAR.jpg';
 import GLOSS from '../public/specular/ChainmailCopperRoundedThin001_GLOSS_4K_SPECULAR.jpg';
 import { convertGlossToRough, convertSpecToPBR } from './PBRConvert';
-import { TextureSlot } from './components/TextureSlot';
 import { SpecularMaterial } from './SpecularMaterial';
 import { SpecularMaterialSlot } from './components/SpecularMaterialSlot';
+import { MetalicRoughnesSlot } from './components/MetalnessRoughnesSlot';
 
 function App() {
 
   const specularMaterial = SpecularMaterial;
-  let viewer = new ConverterViewer(specularMaterial);
+  const standardMaterial = new MeshStandardMaterial();
+
+  let viewer = new ConverterViewer(specularMaterial, standardMaterial);
   const imageLoader = new TextureLoader();
 
   const [needsUpdateSpecularMaterial, setNeedsUpdateSpecularMaterial] = createSignal(false);
+  const [needsUpdateStandardMaterial, setNeedsUpdateStandardMaterial] = createSignal(false);
 
   //specular/glossiness workflof
 
@@ -80,6 +83,7 @@ function App() {
       })
 
       viewer.setSameTexturesPBR();
+      setNeedsUpdateStandardMaterial(prev => !prev);
     })
 
     const roughnessImage = convertGlossToRough(glossTexture()?.image)
@@ -96,6 +100,8 @@ function App() {
       <div class="flex z-50 absolute">
 
         <SpecularMaterialSlot material={specularMaterial} needsUpdate={needsUpdateSpecularMaterial()} />
+
+        <MetalicRoughnesSlot material={standardMaterial} needUpdate={needsUpdateStandardMaterial()} />
 
         <button class="absolute bottom-0 right-0 w-16 h-8 bg-blue-300" onclick={convertMaterial}>Convert</button>
 

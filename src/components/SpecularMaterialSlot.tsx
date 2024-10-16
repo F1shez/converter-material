@@ -41,11 +41,11 @@ export function SpecularMaterialSlot(props: MaterialProps) {
         <div>
             <div class="pl-4 border-l-4 border-indigo-500">Specular/glossines workflof material</div>
 
-            <TextureSlot nameSlot="Diffuse" texture={diffuse() || undefined} setTexture={setDiffuse} />
+            <TextureSlot canEdit={true} nameSlot="Diffuse" texture={diffuse() || undefined} setTexture={setDiffuse} />
 
-            <TextureSlot nameSlot="Reflection" texture={reflection() || undefined} setTexture={setReflection} />
+            <TextureSlot canEdit={true} nameSlot="Reflection" texture={reflection() || undefined} setTexture={setReflection} />
 
-            <TextureSlot nameSlot="Glossiness" texture={glossiness() || undefined} setTexture={setGlossiness} />
+            <TextureSlot canEdit={true} nameSlot="Glossiness" texture={glossiness() || undefined} setTexture={setGlossiness} />
         </div>
     )
 }
