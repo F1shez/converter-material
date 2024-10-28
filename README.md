@@ -4,9 +4,6 @@ This project converts material textures from specular/glossiness workflow to met
 
 Warning: This project may not be accurate. I created custom shader for show specular/glossines workflow from physicmaterial meshphysical.glsl.js it may not be accurate for this workflow.
 
-Example screenshot:
-![image](https://github.com/user-attachments/assets/a5f807c5-951f-4931-852c-c5513c3bd709)
-
 ## Key Technologies
 
 - **Vite**: A fast and lightweight build tool for frontend projects.

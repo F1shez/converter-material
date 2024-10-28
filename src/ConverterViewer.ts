@@ -31,7 +31,6 @@ import ROUGHNESS from "../public/metalness/ChainmailCopperRoundedThin001_ROUGHNE
 import AO from "../public/metalness/ChainmailCopperRoundedThin001_AO_4K_METALNESS.jpg";
 import NRM from "../public/metalness/ChainmailCopperRoundedThin001_NRM_4K_METALNESS.jpg";
 import MASK from "../public/metalness/ChainmailCopperRoundedThin001_MASK_4K_METALNESS.png";
-import { SpecularMaterial } from "./SpecularMaterial";
 
 const imageLoader = new TextureLoader();
 export class ConverterViewer {
@@ -49,56 +48,34 @@ export class ConverterViewer {
   private materialPbr: MeshPhysicalMaterial = new MeshPhysicalMaterial({
     metalness: 1.0,
     roughness: 1.0,
-    // aoMap: imageLoader.load(AO),
-    // normalMap: imageLoader.load(NRM),
-    // alphaMap: imageLoader.load(MASK),
+    aoMap: imageLoader.load(AO),
+    normalMap: imageLoader.load(NRM),
+    alphaMap: imageLoader.load(MASK),
     transparent: true,
   });
-  // private referenceMaterial: MeshStandardMaterial = new MeshStandardMaterial({
-  //   metalness: 1.0,
-  //   roughness: 1.0,
-  //   map: imageLoader.load(COL, (texture) => {
-  //     texture.colorSpace = SRGBColorSpace;
-  //     this.referenceMaterial.needsUpdate = true;
-  //   }),
-  //   // map: imageLoader.load(COLSpec),
-  //   metalnessMap: imageLoader.load(METALNESS),
-  //   roughnessMap: imageLoader.load(ROUGHNESS),
-  //   aoMap: imageLoader.load(AO),
-  //   normalMap: imageLoader.load(NRM),
-  //   alphaMap: imageLoader.load(MASK),
-  //   transparent: true,
-  // });
-
-  private referenceMaterial: MeshStandardMaterial;
+  private referenceMaterial: MeshStandardMaterial = new MeshStandardMaterial({
+    metalness: 1.0,
+    roughness: 1.0,
+    map: imageLoader.load(COL, (texture) => {
+      texture.colorSpace = SRGBColorSpace;
+      this.referenceMaterial.needsUpdate = true;
+    }),
+    // map: imageLoader.load(COLSpec),
+    metalnessMap: imageLoader.load(METALNESS),
+    roughnessMap: imageLoader.load(ROUGHNESS),
+    aoMap: imageLoader.load(AO),
+    normalMap: imageLoader.load(NRM),
+    alphaMap: imageLoader.load(MASK),
+    transparent: true,
+  });
 
   private contentElement = document.getElementById("content") as HTMLElement;
 
-  constructor(
-    materialSpecGloss: ShaderMaterial,
-    materialMetalRough: MeshStandardMaterial
-  ) {
+  constructor() {
     setTimeout(() => {
       console.log(this.referenceMaterial.defines);
       console.log(this.materialPbr.defines);
     }, 10000);
-
-    this.referenceMaterial = materialMetalRough;
-    this.referenceMaterial.setValues({
-      metalness: 1.0,
-      roughness: 1.0,
-      map: imageLoader.load(COL, (texture) => {
-        texture.colorSpace = SRGBColorSpace;
-        this.referenceMaterial.needsUpdate = true;
-      }),
-      // map: imageLoader.load(COLSpec),
-      metalnessMap: imageLoader.load(METALNESS),
-      roughnessMap: imageLoader.load(ROUGHNESS),
-      aoMap: imageLoader.load(AO),
-      normalMap: imageLoader.load(NRM),
-      alphaMap: imageLoader.load(MASK),
-      transparent: true,
-    });
 
     const canvas = document.getElementById("c") as HTMLCanvasElement;
     this.renderer = new WebGLRenderer({
@@ -113,7 +90,58 @@ export class ConverterViewer {
 
     // init shader Specular/Glossines
 
-    this.materialSpecGloss = materialSpecGloss;
+    var uniforms = UniformsUtils.merge([
+      UniformsLib.common,
+      UniformsLib.envmap,
+      UniformsLib.aomap,
+      UniformsLib.specularmap,
+      UniformsLib.lightmap,
+      UniformsLib.emissivemap,
+      UniformsLib.bumpmap,
+      UniformsLib.normalmap,
+      UniformsLib.displacementmap,
+      UniformsLib.roughnessmap,
+      UniformsLib.metalnessmap,
+      UniformsLib.fog,
+      UniformsLib.lights,
+      {
+        emissive: { value: /*@__PURE__*/ new Color(0x000000) },
+        roughness: { value: 1.0 },
+        specularValue: { value: 0.0 },
+        envMapIntensity: { value: 1 },
+        glossinessMap: { value: null },
+      },
+    ]);
+
+
+    this.materialSpecGloss = new ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      transparent: true,
+      lights: true,
+      defines: {
+        USE_MAP: "",
+        USE_UV: "",
+        MAP_UV: "vUv",
+        USE_NORMALMAP: "",
+        NORMALMAP_UV: "vUv",
+        USE_AOMAP: "",
+        AOMAP_UV: "vUv",
+        USE_SPECULAR: "",
+        USE_SPECULARMAP: "",
+        SPECULARMAP_UV: "vUv",
+        USE_ROUGHNESSMAP: "",
+        ROUGHNESSMAP_UV: "vUv",
+        USE_LIGHTMAP: "",
+        LIGHTMAP_UV: "vUv",
+        USE_FOG: "",
+        USE_SHADOWMAP: "",
+        USE_ALPHAMAP: "",
+        ALPHAMAP_UV: "vUv",
+        USE_NORMALMAP_TANGENTSPACE: "",
+      },
+    });
 
     this.materialSpecGloss.uniforms.normalMap.value = imageLoader.load(NRM);
     this.materialSpecGloss.uniforms.aoMap.value = imageLoader.load(AO);
@@ -149,18 +177,21 @@ export class ConverterViewer {
 
     const sphere1 = new SphereGeometry(0.5, 32, 16);
     const mesh1 = new Mesh(sphere1, this.materialSpecGloss);
+    // mesh1.position.set(-30, 0, 0);
 
     const sphere2 = new SphereGeometry(0.5, 32, 16);
     const mesh2 = new Mesh(sphere2, this.materialPbr);
+    // mesh2.position.set(30, 0, 0);
 
     const sphere3 = new SphereGeometry(0.5, 32, 16);
     const mesh3 = new Mesh(sphere3, this.referenceMaterial);
+    // mesh3.position.set(60, 0, 0);
 
     this.scene.add(mesh1, mesh2, mesh3);
 
     this.createScene("Specular/glossiness workflow", mesh1);
-    this.createScene("Converted to metallic/roughness", mesh2);
-    this.createScene("Reference metallic/roughness workflow", mesh3);
+    this.createScene("Converted", mesh2);
+    this.createScene("Metalic/Roughness workflow/reference", mesh3);
 
     this.camera.position.z = 100;
 
@@ -264,14 +295,6 @@ export class ConverterViewer {
     this.materialSpecGloss.needsUpdate = true;
   }
 
-  public setSameTexturesPBR() {
-    this.materialPbr.normalMap =
-      this.materialSpecGloss.uniforms.normalMap.value;
-    this.materialPbr.aoMap = this.materialSpecGloss.uniforms.aoMap.value;
-    this.materialPbr.alphaMap = this.materialSpecGloss.uniforms.alphaMap.value;
-    this.materialPbr.needsUpdate = true;
-  }
-
   public setAlbdeoTexturePBR(texture: Texture) {
     this.materialPbr.map = texture;
     this.materialPbr.needsUpdate = true;
@@ -290,6 +313,9 @@ export class ConverterViewer {
   }
 
   private animate() {
+    // this.updateSize();
+    // this.renderer.render(this.scene, this.camera);
+
     this.renderer.domElement.style.transform = `translateY(${window.scrollY}px)`;
 
     this.renderer.setClearColor(0xffffff);
