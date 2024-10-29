@@ -81,10 +81,11 @@ export class ConverterViewer {
     this.renderer = new WebGLRenderer({
       antialias: true,
       canvas: canvas,
+      alpha: true,
     });
 
     this.renderer.toneMapping = LinearToneMapping;
-    this.scene.background = new Color(0xffffff);
+    // this.scene.background = new Color(0xffffff);
 
     this.setStyleCanvas(this.renderer.domElement);
 
@@ -112,7 +113,6 @@ export class ConverterViewer {
         glossinessMap: { value: null },
       },
     ]);
-
 
     this.materialSpecGloss = new ShaderMaterial({
       uniforms: uniforms,
@@ -191,7 +191,7 @@ export class ConverterViewer {
 
     this.createScene("Specular/glossiness workflow", mesh1);
     this.createScene("Converted", mesh2);
-    this.createScene("Metalic/Roughness workflow/reference", mesh3);
+    // this.createScene("Metalic/Roughness workflow/reference", mesh3);
 
     this.camera.position.z = 100;
 
@@ -322,7 +322,7 @@ export class ConverterViewer {
     this.renderer.setScissorTest(false);
     this.renderer.clear();
 
-    this.renderer.setClearColor(0xe0e0e0);
+    this.renderer.setClearColor(0xffffff);
     this.renderer.setScissorTest(true);
 
     const scope = this;

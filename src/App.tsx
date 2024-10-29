@@ -30,7 +30,6 @@ function App() {
   // onMount(() => {
   //   imageLoader.load(COL, (texture) => {
   //     texture.colorSpace = SRGBColorSpace;
-  //     setAlbedoTexture(texture);
   //     viewer.setDiffuseTexture(texture);
   //   })
 
@@ -38,17 +37,14 @@ function App() {
 
   //   imageLoader.load(REFLECTION, (texture) => {
   //     texture.colorSpace = SRGBColorSpace;
-  //     setReflectionTexture(texture);
   //     viewer.setReflectionTexture(texture);
   //   })
 
 
 
   //   imageLoader.load(GLOSS, (texture) => {
-  //     setGlossTexture(texture);
   //     viewer.setGlossinesinesTexture(texture);
   //   })
-
   // })
 
   function convertMaterial(albedoTexture: Texture, reflectionTexture: Texture, glossinesTexture: Texture) {
@@ -76,7 +72,11 @@ function App() {
 
   return (
     <>
-      {!showViewer() && <MapSelectionForConversion onConvert={convertMaterial} />}
+      {!showViewer() && <MapSelectionForConversion viewer={viewer} onConvert={convertMaterial} />}
+
+      {showViewer() && <div class="flex absolute w-full bottom-8 justify-center items-center">
+        <button class=" bg-slate-500 z-50 p-2 text-center rounded-md text-white">Download maps</button>
+      </div>}
 
       {/* <div class="flex z-50 absolute">
 

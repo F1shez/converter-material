@@ -1,8 +1,10 @@
 import { createSignal } from "solid-js";
-import { RepeatWrapping, Texture, TextureLoader } from "three";
+import { RepeatWrapping, SRGBColorSpace, Texture, TextureLoader } from "three";
+import { ConverterViewer } from "../ConverterViewer";
 
 interface MapSelectionForConversionProps {
     onConvert: (albedoTexture: Texture, reflectionTexture: Texture, glossinesTexture: Texture) => void;
+    viewer: ConverterViewer;
 }
 export function MapSelectionForConversion(props: MapSelectionForConversionProps) {
 
@@ -44,7 +46,13 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                     <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden"
                         onClick={() => document.getElementById('albedoFileInput')?.click()}>
                         {albedoTexture()?.image?.src && <img class="w-48 h-48" src={albedoTexture()?.image?.src} alt="" />}
-                        <input onchange={(e) => { createNewTexture(e).then((texture) => setAlbedoTexture(texture)) }} id="albedoFileInput" class="hidden" type="file" accept=".jpeg, .jpg, .png" />
+                        <input onchange={(e) => {
+                            createNewTexture(e).then((texture) => {
+                                setAlbedoTexture(texture);
+                                texture.colorSpace = SRGBColorSpace;
+                                props.viewer.setDiffuseTexture(texture);
+                            })
+                        }} id="albedoFileInput" class="hidden" type="file" accept=".jpeg, .jpg, .png" />
                         <div class="flex items-center justify-center h-full">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" /></svg>
                         </div>
@@ -56,7 +64,13 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                     <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden"
                         onclick={() => document.getElementById('reflectionFileInput')?.click()}>
                         {reflectionTexture()?.image.src && <img class="w-48 h-48" src={reflectionTexture()?.image.src} alt="" />}
-                        <input onchange={(e) => { createNewTexture(e).then((texture) => setReflectionTexture(texture)) }} id="reflectionFileInput" class="hidden" type="file" accept=".jpeg, .jpg, .png" />
+                        <input onchange={(e) => {
+                            createNewTexture(e).then((texture) => {
+                                setReflectionTexture(texture);
+                                texture.colorSpace = SRGBColorSpace;
+                                props.viewer.setReflectionTexture(texture);
+                            })
+                        }} id="reflectionFileInput" class="hidden" type="file" accept=".jpeg, .jpg, .png" />
                         <div class="flex items-center justify-center h-full">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" /></svg>
                         </div>
@@ -68,7 +82,12 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                     <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden"
                         onclick={() => document.getElementById('glossinessFileInput')?.click()}>
                         {glossTexture()?.image.src && <img class="w-48 h-48" src={glossTexture()?.image.src} alt="" />}
-                        <input onchange={(e) => { createNewTexture(e).then((texture) => setGlossTexture(texture)) }} id="glossinessFileInput" class="hidden" type="file" accept=".jpeg, .jpg, .png" />
+                        <input onchange={(e) => {
+                            createNewTexture(e).then((texture) => {
+                                setGlossTexture(texture);
+                                props.viewer.setGlossinesinesTexture(texture);
+                            })
+                        }} id="glossinessFileInput" class="hidden" type="file" accept=".jpeg, .jpg, .png" />
                         <div class="flex items-center justify-center h-full">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" /></svg>
                         </div>
