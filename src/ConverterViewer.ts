@@ -25,14 +25,6 @@ import vertexShader from "./vertexCustom.txt?raw";
 
 import fragmentShader from "./fragmentCustom.txt?raw";
 
-import COL from "../public/metalness/ChainmailCopperRoundedThin001_COL_4K_METALNESS.jpg";
-import METALNESS from "../public/metalness/ChainmailCopperRoundedThin001_METALNESS_4K_METALNESS.png";
-import ROUGHNESS from "../public/metalness/ChainmailCopperRoundedThin001_ROUGHNESS_4K_METALNESS.jpg";
-import AO from "../public/metalness/ChainmailCopperRoundedThin001_AO_4K_METALNESS.jpg";
-import NRM from "../public/metalness/ChainmailCopperRoundedThin001_NRM_4K_METALNESS.jpg";
-import MASK from "../public/metalness/ChainmailCopperRoundedThin001_MASK_4K_METALNESS.png";
-
-const imageLoader = new TextureLoader();
 export class ConverterViewer {
   private scenes: Scene[] = [];
   public readonly renderer: WebGLRenderer;
@@ -48,24 +40,6 @@ export class ConverterViewer {
   private materialPbr: MeshPhysicalMaterial = new MeshPhysicalMaterial({
     metalness: 1.0,
     roughness: 1.0,
-    aoMap: imageLoader.load(AO),
-    normalMap: imageLoader.load(NRM),
-    alphaMap: imageLoader.load(MASK),
-    transparent: true,
-  });
-  private referenceMaterial: MeshStandardMaterial = new MeshStandardMaterial({
-    metalness: 1.0,
-    roughness: 1.0,
-    map: imageLoader.load(COL, (texture) => {
-      texture.colorSpace = SRGBColorSpace;
-      this.referenceMaterial.needsUpdate = true;
-    }),
-    // map: imageLoader.load(COLSpec),
-    metalnessMap: imageLoader.load(METALNESS),
-    roughnessMap: imageLoader.load(ROUGHNESS),
-    aoMap: imageLoader.load(AO),
-    normalMap: imageLoader.load(NRM),
-    alphaMap: imageLoader.load(MASK),
     transparent: true,
   });
 
@@ -73,7 +47,6 @@ export class ConverterViewer {
 
   constructor() {
     setTimeout(() => {
-      console.log(this.referenceMaterial.defines);
       console.log(this.materialPbr.defines);
     }, 10000);
 
@@ -124,10 +97,10 @@ export class ConverterViewer {
         USE_MAP: "",
         USE_UV: "",
         MAP_UV: "vUv",
-        USE_NORMALMAP: "",
+        // USE_NORMALMAP: "",
         NORMALMAP_UV: "vUv",
-        USE_AOMAP: "",
-        AOMAP_UV: "vUv",
+        // USE_AOMAP: "",
+        // AOMAP_UV: "vUv",
         USE_SPECULAR: "",
         USE_SPECULARMAP: "",
         SPECULARMAP_UV: "vUv",
@@ -137,61 +110,25 @@ export class ConverterViewer {
         LIGHTMAP_UV: "vUv",
         USE_FOG: "",
         USE_SHADOWMAP: "",
-        USE_ALPHAMAP: "",
-        ALPHAMAP_UV: "vUv",
-        USE_NORMALMAP_TANGENTSPACE: "",
+        // USE_ALPHAMAP: "",
+        // ALPHAMAP_UV: "vUv",
+        // USE_NORMALMAP_TANGENTSPACE: "",
       },
     });
-
-    this.materialSpecGloss.uniforms.normalMap.value = imageLoader.load(NRM);
-    this.materialSpecGloss.uniforms.aoMap.value = imageLoader.load(AO);
-    this.materialSpecGloss.uniforms.alphaMap.value = imageLoader.load(MASK);
+    
     this.materialSpecGloss.needsUpdate = true;
-
-    //for show full shader
-
-    // function parseIncludes(string: string): string {
-    //   const includePattern = /#include +<([\w\d./]+)>/g;
-    //   function replace(match: string, include: string): string {
-    //     const chunk = ShaderChunk[include as keyof typeof ShaderChunk];
-    //     if (chunk === undefined) {
-    //       throw new Error(`Can not resolve #include <${include}>`);
-    //     }
-    //     return parseIncludes(chunk);
-    //   }
-    //   return string.replace(includePattern, replace);
-    // }
-
-    // this.materialSpecGloss.onBeforeCompile = function (shader) {
-    //   // Раскрываем все чанки в шейдерах
-    //   const expandedVertexShader = parseIncludes(shader.vertexShader);
-    //   const expandedFragmentShader = parseIncludes(shader.fragmentShader);
-
-    //   console.log("Expanded Vertex Shader:", expandedVertexShader);
-    //   console.log("Expanded Fragment Shader:", expandedFragmentShader);
-
-    //   // Вы можете модифицировать шейдеры здесь, если необходимо
-    // };
-
     //
 
     const sphere1 = new SphereGeometry(0.5, 32, 16);
     const mesh1 = new Mesh(sphere1, this.materialSpecGloss);
-    // mesh1.position.set(-30, 0, 0);
 
     const sphere2 = new SphereGeometry(0.5, 32, 16);
     const mesh2 = new Mesh(sphere2, this.materialPbr);
-    // mesh2.position.set(30, 0, 0);
 
-    const sphere3 = new SphereGeometry(0.5, 32, 16);
-    const mesh3 = new Mesh(sphere3, this.referenceMaterial);
-    // mesh3.position.set(60, 0, 0);
-
-    this.scene.add(mesh1, mesh2, mesh3);
+    this.scene.add(mesh1, mesh2);
 
     this.createScene("Specular/glossiness workflow", mesh1);
     this.createScene("Converted", mesh2);
-    // this.createScene("Metalic/Roughness workflow/reference", mesh3);
 
     this.camera.position.z = 100;
 
@@ -318,11 +255,11 @@ export class ConverterViewer {
 
     this.renderer.domElement.style.transform = `translateY(${window.scrollY}px)`;
 
-    this.renderer.setClearColor(0xffffff);
+    this.renderer.setClearColor(0xf1f5f9);
     this.renderer.setScissorTest(false);
     this.renderer.clear();
 
-    this.renderer.setClearColor(0xffffff);
+    this.renderer.setClearColor(0xf1f5f9);
     this.renderer.setScissorTest(true);
 
     const scope = this;

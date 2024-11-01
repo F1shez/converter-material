@@ -536,7 +536,8 @@ const glossToRough = {
           
           void main() {
               // Look up a color from the texture.
-              gl_FragColor = vec4(1.0 - texture2D(u_image, v_texCoord).rgb, 1);
+              gl_FragColor = vec4(vec3(1.0 - texture2D(u_image, v_texCoord).g), 1);
+            
           } 
       `,
 };

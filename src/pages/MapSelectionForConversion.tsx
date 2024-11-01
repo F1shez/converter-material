@@ -3,7 +3,7 @@ import { RepeatWrapping, SRGBColorSpace, Texture, TextureLoader } from "three";
 import { ConverterViewer } from "../ConverterViewer";
 
 interface MapSelectionForConversionProps {
-    onConvert: (albedoTexture: Texture, reflectionTexture: Texture, glossinesTexture: Texture) => void;
+    onConvert: (albedoTexture: Texture, reflectionTexture: Texture, glossinesTexture: Texture, needConvertGlossines?: boolean) => void;
     viewer: ConverterViewer;
 }
 export function MapSelectionForConversion(props: MapSelectionForConversionProps) {
@@ -12,6 +12,8 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
     const [albedoTexture, setAlbedoTexture] = createSignal<Texture>();
     const [reflectionTexture, setReflectionTexture] = createSignal<Texture>();
     const [glossTexture, setGlossTexture] = createSignal<Texture>();
+
+    const [needConvertGlossines, setNeedConvertGlossines] = createSignal(true);
     const textureLoader = new TextureLoader();
 
     async function createNewTexture(e: Event): Promise<Texture> {
@@ -26,7 +28,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                 fr.onload = function () {
                     if (fr.result) {
                         textureLoader.load(fr.result as string, (texture: Texture) => {
-                            texture.flipY = false;
+                            texture.flipY = true;
                             texture.wrapS = RepeatWrapping;
                             texture.wrapT = RepeatWrapping;
                             resolve(texture);
@@ -42,8 +44,8 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
         <div class="bg-slate-100 flex flex-col h-screen justify-center items-center relative z-50">
             <div class="flex space-x-48">
                 <div class="flex flex-col">
-                    <h2 class="flex">Albedo Texture</h2>
-                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden"
+                    <h2 class="flex">Diffuse Texture</h2>
+                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onClick={() => document.getElementById('albedoFileInput')?.click()}>
                         {albedoTexture()?.image?.src && <img class="w-48 h-48" src={albedoTexture()?.image?.src} alt="" />}
                         <input onchange={(e) => {
@@ -60,8 +62,8 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                 </div>
 
                 <div class="flex flex-col">
-                    <h2 class="flex">Reflection Texture</h2>
-                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden"
+                    <h2 class="flex">Specular Texture</h2>
+                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onclick={() => document.getElementById('reflectionFileInput')?.click()}>
                         {reflectionTexture()?.image.src && <img class="w-48 h-48" src={reflectionTexture()?.image.src} alt="" />}
                         <input onchange={(e) => {
@@ -78,8 +80,17 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                 </div>
 
                 <div class="flex flex-col">
-                    <h2>Glossiness Texture</h2>
-                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden"
+                    <div class="inline-flex">
+                        <h2 class={(needConvertGlossines() ? "text-gray-900" : "text-gray-300 ")}>{"Glossiness Texture"}</h2>
+                        <div class="ml-2 relative inline-block w-8 h-5">
+                            <input onChange={() => setNeedConvertGlossines(!needConvertGlossines())} id="switch-component" type="checkbox" class="peer appearance-none w-8 h-5 bg-slate-300 rounded-full cursor-pointer transition-colors duration-300" />
+                            <label for="switch-component" class="absolute top-0 left-0 w-5 h-5 bg-white rounded-full border border-slate-300 shadow-sm transition-transform duration-300 peer-checked:translate-x-3 cursor-pointer">
+                            </label>
+                        </div>
+                        <h2 class={(!needConvertGlossines() ? "ml-2 text-gray-900" : "ml-2 text-gray-300 ")}>{"Roughness Texture"}</h2>
+                    </div>
+                    <button></button>
+                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onclick={() => document.getElementById('glossinessFileInput')?.click()}>
                         {glossTexture()?.image.src && <img class="w-48 h-48" src={glossTexture()?.image.src} alt="" />}
                         <input onchange={(e) => {
@@ -102,7 +113,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                         const gloss = glossTexture();
 
                         if (albedo && reflection && gloss) {
-                            props.onConvert(albedo, reflection, gloss);
+                            props.onConvert(albedo, reflection, gloss, needConvertGlossines());
                         }
                     }}
                     class="bg-slate-600 text-white p-2 rounded-md">Convert Maps to Metalness/Roughness PBR</button>
