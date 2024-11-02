@@ -18,8 +18,12 @@ import {
   SRGBColorSpace,
   Object3D,
   HemisphereLight,
+  PMREMGenerator,
+  AgXToneMapping,
+  EquirectangularReflectionMapping,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 import vertexShader from "./vertexCustom.txt?raw";
 
@@ -79,7 +83,8 @@ export class ConverterViewer {
       UniformsLib.fog,
       UniformsLib.lights,
       {
-        emissive: { value: /*@__PURE__*/ new Color(0x000000) },
+        envMap: { value: null },
+        // emissive: { value: /*@__PURE__*/ new Color(0x000000) },
         roughness: { value: 1.0 },
         specularValue: { value: 0.0 },
         envMapIntensity: { value: 1 },
@@ -110,12 +115,11 @@ export class ConverterViewer {
         LIGHTMAP_UV: "vUv",
         USE_FOG: "",
         USE_SHADOWMAP: "",
-        // USE_ALPHAMAP: "",
-        // ALPHAMAP_UV: "vUv",
-        // USE_NORMALMAP_TANGENTSPACE: "",
+        USE_ENVMAP: "",
+        STANDARD: "",
       },
     });
-    
+
     this.materialSpecGloss.needsUpdate = true;
     //
 
@@ -132,12 +136,8 @@ export class ConverterViewer {
 
     this.camera.position.z = 100;
 
-    const ambientLight = new AmbientLight(0x7d7d7d, 10);
-    this.scene.add(ambientLight);
-
-    const dirLight = new DirectionalLight(0xffffff, 1);
-    dirLight.position.set(10, 10, 10);
-    this.scene.add(dirLight);
+    this.renderer.toneMapping = AgXToneMapping;
+    this.renderer.toneMappingExposure = 1;
 
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -186,11 +186,25 @@ export class ConverterViewer {
     scene.userData.controls = controls;
 
     scene.add(obj);
-    scene.add(new HemisphereLight(0xaaaaaa, 0x444444, 3));
 
-    const light = new DirectionalLight(0xffffff, 1.5);
-    light.position.set(1, 1, 1);
-    scene.add(light);
+    const scope = this;
+
+    new RGBELoader().load(
+      "https://threejs.org/examples/textures/equirectangular/royal_esplanade_1k.hdr",
+      function (texture) {
+        const pmremGenerator = new PMREMGenerator(scope.renderer);
+        pmremGenerator.compileEquirectangularShader();
+
+        const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+        scope.materialSpecGloss.uniforms.envMap.value = envMap;
+        scope.materialSpecGloss.envMap = envMap;
+        scope.materialSpecGloss.needsUpdate = true;
+        scene.environment = envMap;
+
+        pmremGenerator.dispose();
+        texture.dispose();
+      }
+    );
 
     this.scenes.push(scene);
   }
