@@ -1,8 +1,14 @@
 # Converter Material
 
-This project converts material textures from specular/glossiness workflow to metallic/roughness workflow. It is built using Vite, SolidJS, and TailwindCSS.
+This project converts material textures from specular/glossiness workflow to metallic/roughness workflow and then you can download converted maps.
 
 Warning: This project may not be accurate. I created custom shader for show specular/glossines workflow from physicmaterial meshphysical.glsl.js it may not be accurate for this workflow.
+
+Example screenshot:
+Choose maps to convert
+![Example Screenshot](./public/image1.png)
+and get converted maps
+![Example Screenshot](./public/image2.png)
 
 ## Key Technologies
 
