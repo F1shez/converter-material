@@ -125,7 +125,7 @@ export class ConverterViewer {
     this.scene.add(mesh1, mesh2);
 
     this.createScene("Specular/glossiness workflow", mesh1);
-    this.createScene("Converted", mesh2);
+    this.createScene("Converted to Metalness/roughness workflow", mesh2);
 
     this.camera.position.z = 100;
 
