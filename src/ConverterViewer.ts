@@ -1,26 +1,18 @@
 import {
-  AmbientLight,
-  Color,
-  DirectionalLight,
   LinearToneMapping,
   Mesh,
   MeshPhysicalMaterial,
-  MeshStandardMaterial,
   PerspectiveCamera,
   Scene,
   ShaderMaterial,
   SphereGeometry,
   Texture,
-  TextureLoader,
   UniformsLib,
   UniformsUtils,
   WebGLRenderer,
-  SRGBColorSpace,
   Object3D,
-  HemisphereLight,
   PMREMGenerator,
   AgXToneMapping,
-  EquirectangularReflectionMapping,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
@@ -28,6 +20,10 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import vertexShader from "./vertexCustom.txt?raw";
 
 import fragmentShader from "./fragmentCustom.txt?raw";
+
+interface CustomMaterial extends ShaderMaterial {
+  envMap: Texture; // Adjust the type as needed
+}
 
 export class ConverterViewer {
   private scenes: Scene[] = [];
@@ -62,12 +58,10 @@ export class ConverterViewer {
     });
 
     this.renderer.toneMapping = LinearToneMapping;
-    // this.scene.background = new Color(0xffffff);
 
     this.setStyleCanvas(this.renderer.domElement);
 
     // init shader Specular/Glossines
-
     var uniforms = UniformsUtils.merge([
       UniformsLib.common,
       UniformsLib.envmap,
@@ -84,7 +78,6 @@ export class ConverterViewer {
       UniformsLib.lights,
       {
         envMap: { value: null },
-        // emissive: { value: /*@__PURE__*/ new Color(0x000000) },
         roughness: { value: 1.0 },
         specularValue: { value: 0.0 },
         envMapIntensity: { value: 1 },
@@ -197,7 +190,7 @@ export class ConverterViewer {
 
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
         scope.materialSpecGloss.uniforms.envMap.value = envMap;
-        scope.materialSpecGloss.envMap = envMap;
+        (scope.materialSpecGloss as CustomMaterial).envMap = envMap;
         scope.materialSpecGloss.needsUpdate = true;
         scene.environment = envMap;
 
@@ -228,7 +221,6 @@ export class ConverterViewer {
 
   public setDiffuseTexture(texture: Texture) {
     this.materialSpecGloss.uniforms.map.value = texture;
-    // this.materialSpecGloss.uniforms.diffuse.value = new Color(0xff0000);
     this.materialSpecGloss.needsUpdate = true;
   }
 
@@ -264,9 +256,6 @@ export class ConverterViewer {
   }
 
   private animate() {
-    // this.updateSize();
-    // this.renderer.render(this.scene, this.camera);
-
     this.renderer.domElement.style.transform = `translateY(${window.scrollY}px)`;
 
     this.renderer.setClearColor(0xf1f5f9);
@@ -279,9 +268,6 @@ export class ConverterViewer {
     const scope = this;
 
     this.scenes.forEach(function (scene) {
-      // so something moves
-      // scene.children[0].rotation.y = Date.now() * 0.001;
-
       // get the element that is a place holder for where we want to
       // draw the scene
       const element = scene.userData.element;
@@ -309,11 +295,6 @@ export class ConverterViewer {
       scope.renderer.setScissor(left, bottom, width, height);
 
       const camera = scene.userData.camera;
-
-      //camera.aspect = width / height; // not changing in scope example
-      //camera.updateProjectionMatrix();
-
-      //scene.userData.controls.update();
 
       scope.renderer.render(scene, camera);
     });

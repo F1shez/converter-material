@@ -1,16 +1,5 @@
 import * as webglUtils from "./weblgutils";
 
-// export async function convertSpecToPBR(diffImage: any, specImage: any) {
-//     return new Promise((resolve) => {
-//         const metalicImage = getMetalic(diffImage, specImage);
-//         if (metalicImage) {
-//             metalicImage.onload = () => {
-//                 resolve({ baseColor: getBaseColor(diffImage, specImage, metalicImage), metalic: metalicImage });
-//             }
-//         }
-//     });
-// }
-
 export async function convertSpecToPBR(
   albedoImage: any,
   metalnessImage: any
@@ -350,9 +339,7 @@ function getBaseColor(
 
   const renderImage = new Image();
   renderImage.src = (gl.canvas as HTMLCanvasElement).toDataURL();
-  // renderImage.onload = () => {
-  //   document.body.appendChild(renderImage);
-  // }
+  
   gl.getExtension("WEBGL_lose_context")?.loseContext();
 
   //mb change image to imageData
@@ -409,8 +396,6 @@ function specToGloss(image: any): HTMLImageElement {
 
   // Upload the image into the texture.
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-
-  // console.log("texture", texture);
 
   // lookup uniforms
   var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
@@ -477,9 +462,7 @@ function specToGloss(image: any): HTMLImageElement {
 
   const renderImage = new Image();
   renderImage.src = (gl.canvas as HTMLCanvasElement).toDataURL();
-  // renderImage.onload = () => {
-  //   document.body.appendChild(renderImage);
-  // }
+  
   gl.getExtension("WEBGL_lose_context")?.loseContext();
   return renderImage;
 }
@@ -621,7 +604,6 @@ const diffSpecToBaseColor = {
     vec3 baseColorFromSpecular = (specCol - ((0.04 * (1.0 / max(metCol.r, epsilon))) * (1.0 - metCol.r))).rgb;
     baseColorFromSpecular = clamp(baseColorFromSpecular, 0.0, 1.0);
     
-    //  gl_FragColor = vec4(lerp(baseColorFromDiffuse, baseColorFromSpecular, baseColorFromDiffuse), 1.0);
      gl_FragColor = vec4(lerp(baseColorFromDiffuse, baseColorFromSpecular, metCol), 1.0);
   }
       `,

@@ -41,7 +41,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
     }
 
     return (
-        <div class="bg-slate-100 flex flex-col h-screen justify-center items-center relative z-50">
+        <div class="bg-slate-100 flex flex-col h-screen justify-center items-center relative z-40">
             <div class="flex space-x-48">
                 <div class="flex flex-col">
                     <h2 class="flex">Diffuse Texture</h2>
