@@ -41,11 +41,11 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
     }
 
     return (
-        <div class="bg-slate-100 flex flex-col pt-4 md:pt-0 md:h-screen w-screen justify-center items-center relative z-10">
+        <div class="bg-slate-100 flex flex-col pt-4 md:pt-0 h-screen w-screen md:justify-center items-center relative z-10">
             <div class="flex flex-col md:flex-row md:space-x-48 justify-center items-center">
                 <div class="flex flex-col justify-center items-center">
                     <h2 class="flex">Diffuse Texture</h2>
-                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
+                    <div class="w-36 h-36 md:w-48 md:h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onClick={() => document.getElementById('albedoFileInput')?.click()}>
                         {albedoTexture()?.image?.src && <img class="w-48 h-48" src={albedoTexture()?.image?.src} alt="" />}
                         <input onchange={(e) => {
@@ -63,7 +63,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
 
                 <div class="flex flex-col justify-center items-center mt-2 md:mt-0">
                     <h2 class="flex">Specular Texture</h2>
-                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
+                    <div class="w-36 h-36 md:w-48 md:h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onclick={() => document.getElementById('reflectionFileInput')?.click()}>
                         {reflectionTexture()?.image.src && <img class="w-48 h-48" src={reflectionTexture()?.image.src} alt="" />}
                         <input onchange={(e) => {
@@ -90,7 +90,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                         <h2 class={(!needConvertGlossines() ? "ml-2 text-gray-900" : "ml-2 text-gray-300 ")}>{"Roughness Texture"}</h2>
                     </div>
                     <button></button>
-                    <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
+                    <div class="w-36 h-36 md:w-48 md:h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onclick={() => document.getElementById('glossinessFileInput')?.click()}>
                         {glossTexture()?.image.src && <img class="w-48 h-48" src={glossTexture()?.image.src} alt="" />}
                         <input onchange={(e) => {
