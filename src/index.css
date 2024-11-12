@@ -9,22 +9,7 @@
 body {
     background-color: #f1f5f9;
 }
-
-#content {
-    position: absolute;
-    width: 100%;
-    z-index: 1;
-    padding: 3em 0 0 0;
-    margin-top: 200px;
-    display: flex; /* Enable Flexbox */
-    justify-content: center; /* Center content horizontally */
-}
-
-#c {
-    width: 100%; /* Make sure #c takes up the full width */
-    height: 100%;
-}
-
+/* 
 .list-item {
     display: inline-block;
     margin: 1em;
@@ -34,4 +19,4 @@ body {
 .list-item > div:nth-child(1) {
     width: 600px;
     height: 600px;
-}
+} */

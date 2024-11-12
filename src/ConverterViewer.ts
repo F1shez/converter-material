@@ -46,11 +46,15 @@ export class ConverterViewer {
   private contentElement = document.getElementById("content") as HTMLElement;
 
   constructor() {
+    this.contentElement.className =
+      "absolute w-full z-10 md:pt-6 md:mt-52 flex flex-col md:flex-row items-center justify-center";
+
     setTimeout(() => {
       console.log(this.materialPbr.defines);
     }, 10000);
 
     const canvas = document.getElementById("c") as HTMLCanvasElement;
+
     this.renderer = new WebGLRenderer({
       antialias: true,
       canvas: canvas,
@@ -151,9 +155,10 @@ export class ConverterViewer {
     const scene = new Scene();
 
     const element = document.createElement("div");
-    element.className = "list-item";
+    element.className = "md:inline-block";
 
     const sceneElement = document.createElement("div");
+    sceneElement.className = "w-80 h-80 md:w-96 md:h-96";
     element.appendChild(sceneElement);
 
     const descriptionElement = document.createElement("div");

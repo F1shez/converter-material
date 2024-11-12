@@ -9,7 +9,7 @@ export function InfoAndDonate() {
 
     return (
         <>{showInfo() && <div class="fixed w-screen h-screen top-0 left-0 z-40" onclick={() => { setShowInfo(false) }}></div>}
-            <div class="absolute bottom-0 right-12 z-50 w-56 justify-center items-center">
+            <div class="fixed bottom-0 w-full z-50 md:right-12 md:w-56 justify-center items-center">
                 <div class="flex items-center justify-center w-full">
                     <svg class="fill-slate-900 w-20" viewBox="0 0 159.70549 81.158867" version="1.1" id="svg1"
                         xmlns="http://www.w3.org/2000/svg" >

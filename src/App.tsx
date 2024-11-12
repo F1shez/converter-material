@@ -110,7 +110,7 @@ function App() {
 
       {!showViewer() && <MapSelectionForConversion viewer={viewer} onConvert={convertMaterial} />}
 
-      {showViewer() && <div class="flex absolute w-full bottom-8 justify-center items-center">
+      {showViewer() && <div class="flex absolute w-full mt-4 md:bottom-8 justify-center items-center">
         <button class=" bg-slate-500 z-40 p-2 text-center rounded-md text-white" onclick={downloadMaps}>Download maps</button>
       </div>}
     </>

@@ -41,9 +41,9 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
     }
 
     return (
-        <div class="bg-slate-100 flex flex-col h-screen justify-center items-center relative z-10">
-            <div class="flex space-x-48">
-                <div class="flex flex-col">
+        <div class="bg-slate-100 flex flex-col pt-4 md:pt-0 md:h-screen w-screen justify-center items-center relative z-10">
+            <div class="flex flex-col md:flex-row md:space-x-48 justify-center items-center">
+                <div class="flex flex-col justify-center items-center">
                     <h2 class="flex">Diffuse Texture</h2>
                     <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onClick={() => document.getElementById('albedoFileInput')?.click()}>
@@ -61,7 +61,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                     </div>
                 </div>
 
-                <div class="flex flex-col">
+                <div class="flex flex-col justify-center items-center mt-2 md:mt-0">
                     <h2 class="flex">Specular Texture</h2>
                     <div class="w-48 h-48 bg-slate-200 rounded-md overflow-hidden cursor-pointer hover:bg-slate-300"
                         onclick={() => document.getElementById('reflectionFileInput')?.click()}>
@@ -79,7 +79,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                     </div>
                 </div>
 
-                <div class="flex flex-col">
+                <div class="flex flex-col justify-center items-center mt-2 md:mt-0">
                     <div class="inline-flex">
                         <h2 class={(needConvertGlossines() ? "text-gray-900" : "text-gray-300 ")}>{"Glossiness Texture"}</h2>
                         <div class="ml-2 relative inline-block w-8 h-5">
@@ -105,7 +105,7 @@ export function MapSelectionForConversion(props: MapSelectionForConversionProps)
                     </div>
                 </div>
             </div>
-            <div class="flex w-full justify-center mt-16">
+            <div class="flex w-full justify-center mt-4 md:mt-16">
                 <button
                     onclick={() => {
                         const albedo = albedoTexture();
